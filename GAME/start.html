@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>小游戏</title>
+  <style>
+    * {
+      margin:0;
+      padding:0;
+    }
+    body {
+      background-color: rgb(241, 247, 158);
+    }
+    .ball {
+      width: 40px;
+      height: 40px;
+      display:inline-block;
+      border-radius: 50%;
+      position:absolute;
+      left:50%;
+      top:50%;
+      background: url(img/ball.gif);
+      background-size: 100%;
+    }
+    .ball_hidden {
+      width: 0px;
+      height: 0px;
+      background-color: #fff;
+      border-radius: 50%;
+      box-shadow:0px 0px 40px 10px rgb(253, 221, 38) inset;
+      opacity: .6;
+      position: absolute;
+      left: -50%;
+      top: -50%;
+      transition: width 0.2s,height 0.2s;
+    }
+    .map {
+      width: 500px;
+      height: 500px;
+      position: relative;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%,-50%);
+      background:url(img/map.png);
+    }
+    .background {
+      width: 560px;
+      height: 560px;
+      background:url(img/background.png);
+      margin:0 auto;
+      position: absolute;
+      right: 32%;
+      top: 6%;
+      z-index: 999;
+    }
+    .map .hidden {
+      display: none;
+      width: 560px;
+      height: 560px;
+      background:url(img/die.JPG) no-repeat center center;
+      background-size: 106%;
+      position: absolute;
+      z-index: 99;
+      top: -30px;
+      left: -30px;
+    }  
+    .score {
+      text-align: right;
+      font-size: 30px;
+      font-weight: 700;
+      width: 250px;
+      height: 50px;
+      border: 4px solid #000;
+      position: absolute;
+      right:8%;
+      top: 6%;
+    }
+    .score .sign {
+      line-height: 30px;
+      height: 45px;
+      width: 30px;
+      writing-mode: vertical-rl;
+      font-size: 20px;
+      float:right;
+      z-index: 99;
+    }
+    .score .score_num {
+      position:absolute;
+      width: 260px;
+      height: 50px;
+      right: 40px;
+    }
+    .start {
+      font-size: 20px;
+      width: 100px;
+      height: 40px;
+      position:absolute;
+      right:18%;
+      top: 16%;
+    }
+    .energy {
+      width: 100px;
+      height: 25px;
+      background:#fff;
+      border: 2px solid #000;
+      position: absolute;
+      left:75%;
+      top:30%;
+    }
+    .energy_inner {
+      transition:width 0.5s;
+      width: 0;
+      height: 100%;
+      position:absolute;
+      background-color:rgb(240, 229, 75);
+    }
+    .energy_hidden {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      right: -10px;
+      bottom: -60px;
+      background: url(img/energy1.gif) no-repeat center 10px;
+      border-radius: 50%;
+      background-size: 100%;
+      display: none;
+    }
+    .life {
+      width: 100px;
+      height: 25px;
+      background:#fff;
+      border: 2px solid #000;
+      position: absolute;
+      left:75%;
+      top:24%;
+    }
+    .life .life_inner {
+      transition:width 0.5s;
+      width: 100%;
+      height: 100%;
+      position:absolute;
+      background-color: red;
+    }
+     p {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: url(img/barrier.png) no-repeat center center;
+      background-size: 110%;
+      border-radius: 50%;
+    }
+    span {
+      position: relative;
+      float:right;
+      z-index: 99;
+      line-height: 1.6;
+    }
+    b {
+      width: 30px;
+      height: 40px;
+      position: absolute;
+      background:url(img/battery1.png) no-repeat center center;
+      background-size:90%;
+    }
+    .introduction {
+      width: 300px;
+      border: 3px solid #000;
+      position: absolute;
+      left: 20px;
+      top:40px;
+      font-size: 25px;
+    }
+    .speed .ball_speed {
+      font-size:30px; 
+      width: 120px;
+      height: 60px;
+      border: 2px solid #000;
+      position: absolute;
+      right: 8%;
+      top: 16%;
+    }
+    .speed .ball_speed .img {
+      width: 50px;
+      height: 50px;
+      float: left;
+      background:url(img/get.jpg) no-repeat center center;
+      background-size: 100%;
+      margin-top: 5px;
+    }
+    .speed .ball_speed_num {
+      font-size:25px; 
+      float: right;
+      width: 60px;
+      height: 60px;
+      line-height: 50px;
+    }
+    .speed .barrier_speed {
+      font-size:30px; 
+      width: 120px;
+      height: 60px;
+      border: 2px solid #000;
+      position: absolute;
+      right: 8%;
+      top:28%; 
+    }
+    .speed .barrier_speed .img {
+      width: 50px;
+      height: 50px;
+      float: left;
+      background: url(img/barrier.png) no-repeat center center;
+      background-size: 100%;
+      margin-top: 5px;
+    }
+    .speed .barrier_speed_num {
+      line-height: 50px;
+      font-size:25px; 
+      float: right;
+      width: 60px;
+      height: 60px;
+    }
+    .competition {
+      text-align: center;
+      position: absolute;
+      right: 80px;
+      bottom: 150px;
+      border-collapse: collapse;
+    }
+    strong {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <button class="start">游戏开始</button>
+  <div class="introduction">
+    <strong>键盘上下左右(WSAD)控制皮卡丘</strong>,皮卡丘被精灵球击中会掉20%血,捡到电池可以加血加能量但都只有10%,另外可以永久提升速度,
+    <strong>能量满100%摁空格</strong>皮卡丘可以释放十万伏特<strong>清除所有精灵球</strong>，并获得短时间的屏障<strong>抵御所有精灵球</strong>，血量低于0，游戏结束;
+    精灵球和皮卡丘的移动速度都会越来越快。右边状态栏显示皮卡丘与障碍物当前速度。<strong>1360屏幕Ctrl+ - 缩放屏幕10%比较好。</strong>
+  </div>
+  <div class="score">
+    <span class="score_num"></span>
+    :<span class="sign">得分</span>
+  </div>
+  <div class="energy">
+    <span class="energy_num"></span><span>能量值</span>
+    <div class="energy_inner"></div>
+    <div class="energy_hidden"></div>
+  </div>
+  <div class="life">
+    <span class="life_num"></span><span>生命值</span>
+    <div class="life_inner">
+    </div>
+  </div>
+    <div class="speed">
+        <div class="ball_speed">
+          <div class="img"></div>:
+          <div class="ball_speed_num"></div>
+        </div>
+        <div class="barrier_speed">
+            <div class="img"></div>:
+            <div class="barrier_speed_num"></div>
+        </div>
+    </div>
+    <table class="competition" border="2" width="300">
+       <caption><h3>高分纪录</h3></caption>
+       <thead>
+         <tr>
+           <td width="100">排名</td>
+           <td>分数</td>
+         </tr>
+      </thead>
+       <tbody>
+          <tr>
+              <td>1</td>
+              <td class="one table_num">0</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td class="two table_num">0</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td class="three table_num">0</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td class="four table_num">0</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td class="five table_num">0</td>
+            </tr>
+       </tbody>
+     </table>
+    <div class="background">
+      <div class="map">
+        <i class="ball">
+          <div class="ball_hidden"></div>
+        </i>
+        <div class="hidden"></div>
+      </div>
+    </div>
+  <script>
+    var introduction=document.querySelector('.introduction');
+    var ball= document.querySelector('i');
+    var ball_hidden=document.querySelector('.ball_hidden');
+    var map=document.querySelector('.map');
+    var button=document.querySelector('button');
+    var life=document.querySelector('.life_inner');
+    var energy=document.querySelector('.energy_inner')
+    var score=document.querySelector('.score_num');
+    var MaxX=map.offsetWidth-ball.offsetWidth;
+    var MaxY=map.offsetHeight-ball.offsetHeight;
+    var background=document.querySelector('.background');
+    var hidden=document.querySelector('.hidden');
+    var energy_hidden=document.querySelector('.energy_hidden');
+    var energy_num=document.querySelector('.energy_num');
+    var life_num=document.querySelector('.life_num');
+    var ball_speed_num=document.querySelector('.speed .ball_speed_num')
+    var barrier_speed_num=document.querySelector('.speed .barrier_speed_num');
+    var one=document.querySelector('.one');
+    var two=document.querySelector('.two');
+    var three=document.querySelector('.three');
+    var four=document.querySelector('.four');
+    var five=document.querySelector('.five');
+    var i=20;
+    var l=100;
+    var k=0;
+    var b=0;
+    var d=0;
+    energy_num.innerText=b+'%';
+    life_num.innerText=l+'%'
+    button.addEventListener('click',function () {
+      clearInterval(ball.timeridBattery);
+      energy_hidden.style.display='none';
+      b=0;
+      energy.style.width=0;
+      button.disabled='true';
+      hidden.style.display='none';
+      ball.style.background='url(img/ball.gif)';
+      ball.style.backgroundSize=100+'%';
+      k=0;
+      d=0;
+      var i=20;
+      l=100;
+      life.style.width=l+'%';
+      energy_num.innerText=b+'%';
+      life_num.innerText=l+'%'
+      var timeridnum=setInterval(function() {
+        k+=1;
+        if (100*k>=1000) {
+          var str=String(100*k);
+          var ret='';
+          while(str.length>3) {
+            ret=','+str.slice(-3)+ret;
+            str=str.slice(0,str.length-3);
+          }
+          ret=str+ret;
+          score.innerText=ret;
+        }
+        else {
+          score.innerText=100*k;        
+        }
+      },1000)
+      var timeridTatal=setInterval(function () {
+        var barrier=document.createElement('p');
+        barrier.aa=[
+          ['left','top'],
+          ['right','top'],
+          ['top','left'],
+          ['bottom','left']
+        ][parseInt(Math.random()*4)];
+        var first=barrier.aa[0];
+        var second=barrier.aa[1];
+        if (k==1) {
+          ball.timeridBattery=setInterval(function () {
+          var battery=document.createElement('b');
+          battery.style.left=Math.random()*map.offsetWidth+'px';
+          battery.style.top=Math.random()*map.offsetHeight+'px';
+          map.appendChild(battery);
+          },4200)
+          // 这里修改电池出现频率
+      }
+      barrier.style[first]=-100+'px';
+      barrier.style[second]=(Math.random()*580-80)+'px';
+     // 触碰判断
+      barrier.touch=function (ball) {
+      var r1=this.offsetWidth/2;
+      var r2=ball.offsetWidth/2;
+      var c1x=this.offsetLeft+r1;
+      var c1y=this.offsetTop+r1;
+      var c2x=ball.offsetLeft+r2;
+      var c2y=ball.offsetTop+r2;
+      var dx=Math.abs(c1x-c2x);
+      var dy=Math.abs(c1y-c2y);
+      var dir=Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
+      if (dir<=r1+r2) {
+        l=l-i;
+        life.style.width=l+'%';
+        life_num.innerText=l+'%';
+        this.parentNode.removeChild(this);
+        ball.style.background='url(img/danger.JPG) no-repeat center center';
+        ball.style.backgroundSize=40+'px';
+        setTimeout(function () {
+          ball.style.background='url(img/ball.gif)';
+          ball.style.backgroundSize=100+'%';
+        },2000)
+        if (l<=0) {
+        life.style.width=0;
+        hidden.style.display='block';
+        clearInterval(timeridnum);
+        clearInterval(ball.timeridBattery);
+        clearInterval(timeridTatal);
+        var barriers=document.querySelectorAll('p');
+        barriers.forEach(function (v) {
+          v.parentNode.removeChild(v);
+        })
+        var batterys=document.querySelectorAll('b')
+        batterys.forEach(function(v) {
+        v.parentNode.removeChild(v);
+        })
+          l=0;
+          life_num.innerText=l+'%';
+          button.disabled='';
+          var arr=[];
+          var table_num=document.querySelectorAll('.table_num');
+          for (var q=0;q<table_num.length;q++) {
+            arr[q]=table_num[q].innerText;
+          }
+          arr.push(100*k);
+          arr.sort(function(a,b) {
+            return b-a;
+          })
+          for (var q=0;q<table_num.length;q++) {
+            table_num[q].innerText=arr[q];
+          }
+          alert ('你也太菜了!!,再来一局!');
+          }
+        }
+      }
+      barrier.touch_hidden=function (ball_hidden) {
+        var r1=this.offsetWidth/2;
+        var r2=ball_hidden.offsetWidth/2;
+        var c1x=this.offsetLeft+r1;
+        var c1y=this.offsetTop+r1;
+        var c2x=ball.offsetLeft+r2/2;
+        var c2y=ball.offsetTop+r2/2;
+        var dx=Math.abs(c1x-c2x);
+        var dy=Math.abs(c1y-c2y);
+        var dir=Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
+        if (dir<=r1+r2) {
+          this.parentNode.removeChild(this);
+        }
+      }
+       // 动画函数
+      barrier.animate=function (target,v) {
+        var that=this;
+        clearInterval(that.timerid);
+        that.timerid=setInterval( function () {
+        if (ball_hidden.offsetWidth>=ball.offsetWidth) {
+          that.touch_hidden(ball_hidden);
+        }
+        else {
+          that.touch(ball);
+        }
+        if (first=='left') {
+          var current=that.offsetLeft;
+        }
+        // 左边的
+        // var current=that.offsetLeft;
+        if (first=='right') {
+          var current=map.offsetWidth-that.offsetLeft;
+        }
+        // 右边的
+        // var current=map.offsetWidth-that.offsetLeft;
+        if (first=='top') {
+          var current=that.offsetTop;
+        }
+        // 上面的
+        // var current=that.offsetTop;
+        if (first=='bottom') {
+          var current=map.offsetHeight-that.offsetTop;
+        }
+        // 下面的
+        // var current=map.offsetHeight-that.offsetTop;
+        var dir=target-current;
+        var step=v;
+          if (dir<=Math.abs(step)) {
+            clearInterval(that.timerid);
+          that.style[first]=target+'px';
+          try {
+            that.parentNode.removeChild(that);
+          }catch{
+          }
+          }else {
+            current+=step;
+            that.style[first]=current+'px';
+          }
+        },60-10/(Math.pow(k,1/3)+1/3));
+      };
+      barrier.animate(520,3+k/5);
+      map.appendChild(barrier);
+      },800)
+    })    
+      // 圆形和矩形判断
+      function touch2(div,circle) {
+          // 圆心坐标
+          var r=circle.offsetWidth/2;
+          var cx=circle.offsetLeft+r;
+          var cy=circle.offsetTop+r;
+          // 圆心(cx,cy)半径r;
+          var minx=div.offsetLeft;
+          var maxx=minx+div.offsetWidth;
+          var miny=div.offsetTop;
+          var maxy=miny+div.offsetHeight;
+          var dx=minx+div.offsetWidth/2;
+          var dy=miny+div.offsetHeight/2;
+          var l1=Math.sqrt(Math.pow(Math.abs(cx-minx),2)+Math.pow(Math.abs(cy-miny),2));
+          var l2=Math.sqrt(Math.pow(Math.abs(cx-maxx),2)+Math.pow(Math.abs(cy-miny),2));
+          var l3=Math.sqrt(Math.pow(Math.abs(cx-minx),2)+Math.pow(Math.abs(cy-maxy),2));
+          var l4=Math.sqrt(Math.pow(Math.abs(cx-maxx),2)+Math.pow(Math.abs(cy-maxy),2));
+          var lmin=Math.min(l1,l2,l3,l4);
+          if ((minx<cx&&cx<maxx)&&(miny<cy&&cy<maxy)) {
+            div.parentNode.removeChild(div);
+            d++;
+            l=l+10;
+            b=b+10;
+            energy_hidden.style.display='none';
+            if(b>=100) {
+              b=100;
+              energy_hidden.style.display='block';
+            }
+            if (l>=100) {
+              l=100
+            }
+            life.style.width=l+'%';
+            energy.style.width=b+'%';
+            energy_num.innerText=b+'%';
+            life_num.innerText=l+'%'
+            ball.style.background='url(img/happy.jpg) no-repeat -4px -1px';
+            ball.style.backgroundSize='cover';
+            setTimeout(function () {
+              ball.style.background='url(img/ball.gif)';
+              ball.style.backgroundSize=100+'%';
+            },1000)
+          }
+          else {
+            if ((cx+r<minx||maxx<cx-r)||(cy+r<miny||maxy<cy-r)) {
+              // alert('两图形不重叠');
+            }
+            else {
+              if (lmin<=r||((minx<cx&&cx<maxx)||(miny<cy&&cy<maxy))) {
+                div.parentNode.removeChild(div);
+                l=l+10;
+                b=b+10;
+                d++;
+                energy_hidden.style.display='none';
+                if(b>=100) {
+                b=100;
+                energy_hidden.style.display='block';
+                }
+                if (l>=100) {
+                  l=100;
+                }
+                life.style.width=l+'%';
+                energy.style.width=b+'%';
+                energy_num.innerText=b+'%';
+                life_num.innerText=l+'%'
+                ball.style.background='url(img/happy.jpg) no-repeat -4px -1px';
+                ball.style.backgroundSize='cover';
+                setTimeout(function () {
+                  ball.style.background='url(img/ball.gif)';
+                  ball.style.backgroundSize=100+'%';
+                },1000)
+              }
+              else {
+                // alert('两图形不重叠');
+              }
+            }
+          }
+        }
+    // 球的按键方向功能实现
+    document.addEventListener('keydown',function (e) {
+      var batterys=document.querySelectorAll('b');
+      batterys.forEach(function(v) {
+      touch2(v,ball);
+      })
+      i=((40-40/Math.pow(k,1/3)+k/20)+d)/5;
+      if (!k==0) {
+      ball_speed_num.innerText=i.toFixed(1);
+      barrier_speed_num.innerText=(3+k/4).toFixed(1);
+      }
+      if (e.keyCode==37 || e.keyCode==65) {
+        if (ball.offsetLeft<i) {
+          ball.style.left=i+'px';
+        }
+        ball.style.left=ball.offsetLeft-i+'px';
+      }
+      if (e.keyCode==38 || e.keyCode==87) {
+        if (ball.offsetTop<i) {
+          ball.style.top=i+'px';
+        }
+        ball.style.top=ball.offsetTop-i+'px';
+      }
+      if (e.keyCode==39 || e.keyCode==68) {
+        if (ball.offsetLeft>=MaxX-i) {
+          ball.style.left=MaxX-i+'px';
+        }
+        ball.style.left=ball.offsetLeft+i+'px';
+      }
+      if (e.keyCode==40 || e.keyCode==83) {
+        if (ball.offsetTop>=MaxY-i) {
+          ball.style.top=MaxY-i+'px';
+        }
+        ball.style.top=ball.offsetTop+i+'px';
+      }
+      if (e.keyCode==32 && b==100) {
+        var barriers=document.querySelectorAll('p');
+          barriers.forEach(function(v) {
+          v.parentNode.removeChild(v);
+          b=0;
+          energy_hidden.style.display='none';
+          energy.style.width=b+'%';
+          energy_num.innerText=b+'%';
+          ball.style.background='url(img/energy.gif) no-repeat center center';
+          ball.style.backgroundSize=100+'%';
+          ball_hidden.style.width=80+'px';
+          ball_hidden.style.height=80+'px';
+          setTimeout(function () {
+            ball.style.background='url(img/ball.gif)';
+            ball.style.backgroundSize=100+'%';
+            ball_hidden.style.width=0+'px';
+            ball_hidden.style.height=0+'px';
+          },5000)
+        })
+      }
+      if (e.keyCode==192) {
+        ball.style.transition=0.01+'s';
+      }
+      if (e.keyCode==49) {
+        ball.style.transition='';
+      }
+    })
+  </script>
+</body>
+</html>
