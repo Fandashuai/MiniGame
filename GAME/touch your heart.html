@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+    }
+    div {
+      width: 500px;
+      height: 200px;
+      position: absolute;
+      background-color: rgb(119, 226, 77);
+      left: 0px;
+      top:0px;
+    }
+    p {
+      width: 200px;
+      height: 200px;
+      position: absolute;
+      background-color: rgb(123, 104, 230);
+      left: 465px;
+      top: 180px;
+      border-radius:50%;
+    }
+  </style>
+</head>
+<body>
+  <div></div>
+  <p></p>
+  <script>
+    var div=document.querySelector('div');
+    var p=document.querySelector('p');
+    // 矩形判断
+    function touch (div, p) {
+      // 取div内的点a,取p内的点b如果a和b横纵坐标永远无法相等，则不重叠。
+      // 第一个盒子坐标判断
+      var Minx1=div.offsetLeft;
+      var Maxx1=div.offsetLeft+div.offsetWidth;
+      var Miny1=div.offsetTop;
+      var Maxy1=div.offsetTop+div.offsetHeight;
+        // 第二个盒子坐标判断
+      var Minx2=p.offsetLeft;
+      var Maxx2=p.offsetLeft+p.offsetWidth;
+      var Miny2=p.offsetTop;
+      var Maxy2=p.offsetTop+p.offsetHeight;
+      // 判断横坐标有交集
+      if ((Maxx1<Minx2||Maxx2<Minx1)||( Maxy1<Miny2||Maxy2<Miny1)) {
+        console.log('两个盒子不重叠');
+      }
+    }
+    // 圆形判断
+    function touchcircle (circle1,circle2) {
+      // 以圆心判断，在图片坐标基准点相同的情况下，必须以圆心算。
+      // 半径为宽的一半
+      var r1=circle1.offsetWidth/2;
+      var r2=circle2.offsetWidth/2;
+      var c1x=circle1.offsetLeft+r1;
+      var c1y=circle1.offsetTop+r1;
+      var c2x=circle2.offsetLeft+r2;
+      var c2y=circle2.offsetTop+r2;
+      var dx=Math.abs(c1x-c2x);
+      var dy=Math.abs(c1y-c2y);
+      var dir=Math.sqrt(Math.pow(dx,2)+Math.pow(dy,2))
+      if (dir<=r1+r2) {
+        alert ('两圆重叠');
+      }
+      else {
+        alert ('两圆不重叠');
+      }
+    }
+    // 圆形和矩形判断
+    function touch2(div,circle) {
+      // 圆心坐标
+      var r=circle.offsetWidth/2;
+      var cx=circle.offsetLeft+r;
+      var cy=circle.offsetTop+r;
+      // 圆心(cx,cy)半径r;
+      var minx=div.offsetLeft;
+      var maxx=minx+div.offsetWidth;
+      var miny=div.offsetTop;
+      var maxy=miny+div.offsetHeight;
+      var dx=minx+div.offsetWidth/2;
+      var dy=miny+div.offsetHeight/2;
+      // 横坐标距离
+      // var x=Math.abs(cx-dx);
+      // 纵坐标距离
+      // var y=Math.abs(cy-dy);
+      // 左上距离
+      var l1=Math.sqrt(Math.pow(Math.abs(cx-minx),2)+Math.pow(Math.abs(cy-miny),2));
+      // 右上
+      var l2=Math.sqrt(Math.pow(Math.abs(cx-maxx),2)+Math.pow(Math.abs(cy-miny),2));
+      // 左下
+      var l3=Math.sqrt(Math.pow(Math.abs(cx-minx),2)+Math.pow(Math.abs(cy-maxy),2));
+      // 右下
+      var l4=Math.sqrt(Math.pow(Math.abs(cx-maxx),2)+Math.pow(Math.abs(cy-maxy),2));
+      var lmin=Math.min(l1,l2,l3,l4);
+      // var l=Math.sqrt(Math.pow(div.offsetWidth/2,2)+Math.pow(div.offsetHeight/2,2));
+      // var dir=Math.sqrt(Math.pow(x,2)+Math.pow(y,2));
+      // 矩形几何中心(dx,dy),l为对角线1/2;
+      // 圆形横坐标区间(cx-r,cx+r) 纵坐标区间(cy-r,cy+r);
+      // 矩形横坐标区间(minx,maxx)纵坐标区间(miny,maxy);
+      // 如果两图坐标无交集肯定不重叠;
+      if ((minx<cx&&cx<maxx)&&(miny<cy&&cy<maxy)) {
+        alert('圆心在矩形内部');
+      }
+      else {
+        if ((cx+r<minx||maxx<cx-r)||(cy+r<miny||maxy<cy-r)) {
+          alert('两图形不重叠');
+        }
+        else {
+          // 横坐标区间相交且纵坐标区间相交
+          // 横坐标区间相交(minx<cx-r<maxx)||(minx<cx+r<maxx)
+          // (minx<cx-r&&cx-r<maxx) 
+          // 纵坐标区间相交(miny<cy-r<maxy)||(miny<cy+r<maxy)
+          // 此时圆应在矩形四个角的位置要重叠必须dir<l+r
+          // if (((minx<cx-r&&cx-r<maxx)||(minx<cx+r&&cx+r<maxx))&&((miny<cy-r&&cy-r<maxy)||(miny<cy+r&&cy+r<maxy))&&(dir<l+r)) {
+          if (lmin<=r||((minx<cx&&cx<maxx)||(miny<cy&&cy<maxy))) {
+            alert('两图形重叠');
+            // return;
+          }
+          // if ((minx<cx&&cx<maxx)||(miny<cy&&cy<maxy)){
+          //   alert ('两图形重叠');
+          // }
+          // else只对它上面的if取反;
+          else {
+            // console.log(lmin,r)
+            alert('两图形不重叠');
+          }
+        }
+      }
+    }
+    document.addEventListener('keydown',function (e) {
+      if (e.keyCode==32) {
+        touch2(div,p);
+      }
+    })
+   
+  </script>
+</body>
+</html>
