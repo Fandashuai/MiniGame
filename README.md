@@ -1,2 +1,2 @@
 # MiniGame
-A simple little game, run with Chrome.As time goes on, the game will become more and more difficult, and you will be rewarded accordingly. I hope you can keep playing for 1 minute.
+As the game becomes more and more difficult over time, you will be rewarded accordingly. I hope you can try several times more and hold on for 2 minutes.
